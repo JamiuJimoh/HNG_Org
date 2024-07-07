@@ -20,6 +20,7 @@ func main() {
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
+	port := os.Getenv("PORT")
 	ctx := context.Background()
 	conn, err := pgx.Connect(ctx, dbURL)
 	if err != nil {
@@ -35,7 +36,7 @@ func main() {
 		log.Fatalf("error while setting up token config")
 	}
 	server := &http.Server{
-		Addr: ":8080",
+		Addr: ":" + port,
 	}
 
 	http.HandleFunc("POST /auth/register", apiCfg.Register)

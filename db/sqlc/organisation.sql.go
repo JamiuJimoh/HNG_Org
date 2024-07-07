@@ -58,6 +58,36 @@ func (q *Queries) GetOrgByID(ctx context.Context, orgID string) (Organisation, e
 	return i, err
 }
 
+const getOrgByOrgID = `-- name: GetOrgByOrgID :many
+select org_id, name, description, user_id from organisations
+where org_id = $1
+`
+
+func (q *Queries) GetOrgByOrgID(ctx context.Context, orgID string) ([]Organisation, error) {
+	rows, err := q.db.Query(ctx, getOrgByOrgID, orgID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Organisation
+	for rows.Next() {
+		var i Organisation
+		if err := rows.Scan(
+			&i.OrgID,
+			&i.Name,
+			&i.Description,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserOrgsByID = `-- name: GetUserOrgsByID :many
 select org_id, name, description, user_id from organisations
 where user_id = $1

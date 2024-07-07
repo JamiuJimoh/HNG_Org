@@ -1,10 +1,5 @@
 package models
 
-type OrgReqData struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
-
 type ResOrg struct {
 	Organisations []Organisation `json:"organisations"`
 }

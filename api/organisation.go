@@ -80,6 +80,11 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ac *ApiCfg) PatchOrganistionWithUser(w http.ResponseWriter, r *http.Request) {
-	// orgId := r.PathValue("orgId")
 	// currentUserId := (ac.ctx.Value(currentUserIDKey)).(string)
+	// orgId := r.PathValue("orgId")
+	// sqlOrg, err := ac.db.GetOrgByOrgID(r.Context(), orgId)
+	// if err != nil {
+	// utils.RespondWithError(w, http.StatusNotFound, "Client error")
+	// return
+	// }
 }
