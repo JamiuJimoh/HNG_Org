@@ -83,5 +83,4 @@ func (ac *ApiCfg) Register(w http.ResponseWriter, r *http.Request) {
 func handleRegistrationError(w http.ResponseWriter, err error) {
 	log.Print(err)
 	utils.RespondWithError(w, http.StatusBadRequest, "Registration unsuccessful")
-	// http.Error(w, "An error occured", http.StatusInternalServerError)
 }

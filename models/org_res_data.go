@@ -19,7 +19,7 @@ type SingleOrgResData struct {
 	Data Organisation `json:"data"`
 }
 
-func NewOrgsResData(orgs []Organisation) MultiOrgResData {
+func FoundOrgsResData(orgs []Organisation) MultiOrgResData {
 	return MultiOrgResData{
 		OrgMessageData{
 			Status:  "success",
@@ -29,11 +29,21 @@ func NewOrgsResData(orgs []Organisation) MultiOrgResData {
 	}
 }
 
+func FoundOrgResData(org Organisation) SingleOrgResData {
+	return SingleOrgResData{
+		OrgMessageData{
+			Status:  "success",
+			Message: "organisation found",
+		},
+		org,
+	}
+}
+
 func NewOrgResData(org Organisation) SingleOrgResData {
 	return SingleOrgResData{
 		OrgMessageData{
 			Status:  "success",
-			Message: "organisations found",
+			Message: "Organisation created successfully",
 		},
 		org,
 	}

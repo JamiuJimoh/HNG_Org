@@ -46,7 +46,7 @@ func (ac *ApiCfg) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ac *ApiCfg) createLoginData(u models.ResUser, message string) (*models.LoginResData, error) {
-	accessToken, err := ac.tokenCfg.CreateToken(u.UserId, u.FirstName, time.Duration(time.Minute*15))
+	accessToken, err := ac.tokenCfg.CreateToken(u.UserId, u.FirstName, time.Duration(time.Hour*72))
 	if err != nil {
 		return nil, err
 	}

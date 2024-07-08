@@ -21,6 +21,10 @@ func (ac *ApiCfg) AuthMiddleware(handler http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		bearerToken, err := getBearerToken(r.Header)
+		if err != nil {
+			handleLoginError(w, err)
+			return
+		}
 		claims, err := ac.tokenCfg.VerifyToken([]byte(bearerToken))
 		if err != nil {
 			handleLoginError(w, err)
@@ -28,12 +32,6 @@ func (ac *ApiCfg) AuthMiddleware(handler http.HandlerFunc) http.HandlerFunc {
 		}
 		ac.ctx = context.WithValue(ac.ctx, currentUserIDKey, claims.ID)
 
-		// user, err := ac.db.GetUserByID(r.Context(), claims.ID)
-		// if err != nil {
-		// 	handleLoginError(w, err)
-		// 	return
-		// }
-		// log.Print(user)
 		handler(w, r)
 	}
 }

@@ -17,24 +17,26 @@ func (ac *ApiCfg) GetOrganistions(w http.ResponseWriter, r *http.Request) {
 	currentUserId := (ac.ctx.Value(currentUserIDKey)).(string)
 	orgs, err := ac.db.GetUserOrgsByID(r.Context(), currentUserId)
 	if err != nil {
+		log.Print(err)
 		utils.RespondWithError(w, http.StatusNotFound, "no results found")
 		return
 	}
 
 	data := models.OrgsFromSQLOrgs(orgs)
-	utils.RespondWithJSON(w, http.StatusOK, models.NewOrgsResData(data))
+	utils.RespondWithJSON(w, http.StatusOK, models.FoundOrgsResData(data))
 }
 
 func (ac *ApiCfg) GetOrganistion(w http.ResponseWriter, r *http.Request) {
 	orgId := r.PathValue("orgId")
 	org, err := ac.db.GetOrgByID(r.Context(), orgId)
 	if err != nil {
+		log.Print(err)
 		utils.RespondWithError(w, http.StatusNotFound, "no results found")
 		return
 	}
 
 	data := models.OrgFromSQLOrg(org)
-	utils.RespondWithJSON(w, http.StatusOK, models.NewOrgResData(data))
+	utils.RespondWithJSON(w, http.StatusOK, models.FoundOrgResData(data))
 }
 
 func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
@@ -42,12 +44,14 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 	var org models.OrgReqData
 	bytes, err := io.ReadAll(r.Body)
 	if err != nil {
+		log.Print(err)
 		utils.RespondWithError(w, http.StatusInternalServerError, "an error occurred")
 		return
 	}
 
 	err = json.Unmarshal(bytes, &org)
 	if err != nil {
+		log.Print(err)
 		utils.RespondWithError(w, http.StatusBadRequest, "Client error")
 		return
 	}
@@ -61,6 +65,7 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 
 	id, err := uuid.NewV7()
 	if err != nil {
+		log.Print(err)
 		utils.RespondWithError(w, http.StatusInternalServerError, "an error occurred")
 		return
 	}
@@ -71,6 +76,7 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 		UserID:      currentUserId,
 	})
 	if err != nil {
+		log.Print(err)
 		utils.RespondWithError(w, http.StatusBadRequest, "Client error")
 		return
 	}
@@ -85,8 +91,8 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ret := models.OrgFromSQLOrg(sqlOrg)
-	utils.RespondWithJSON(w, http.StatusCreated, ret)
+	data := models.OrgFromSQLOrg(sqlOrg)
+	utils.RespondWithJSON(w, http.StatusCreated, models.NewOrgResData(data))
 }
 
 func (ac *ApiCfg) PatchOrganistionWithUser(w http.ResponseWriter, r *http.Request) {
@@ -127,5 +133,5 @@ func (ac *ApiCfg) PatchOrganistionWithUser(w http.ResponseWriter, r *http.Reques
 		Status:  "success",
 		Message: "User added to organisation successfully",
 	}
-	utils.RespondWithJSON(w, http.StatusCreated, payload)
+	utils.RespondWithJSON(w, http.StatusOK, payload)
 }

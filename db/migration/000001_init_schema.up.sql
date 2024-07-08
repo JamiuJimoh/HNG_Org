@@ -1,14 +1,14 @@
 create table users (
-   id varchar(36) primary key unique not null,
-   first_name varchar(255) not null,
-   last_name varchar(255) not null,
-   email varchar(255) unique not null,
+   id varchar(36) primary key, 
+   first_name varchar(255) not null check (first_name <> ''),
+   last_name varchar(255) not null check (last_name <> ''),
+   email varchar(255) unique not null check (last_name <> ''),
    password varchar(255) not null,
    phone varchar(255)
 );
 
 create table organisations (
-   org_id varchar(36) primary key unique not null,
+   org_id varchar(36) primary key,
    name varchar(255) not null,
    description varchar(255),
    user_id varchar(36) not null references users(id)

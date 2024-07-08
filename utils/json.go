@@ -31,14 +31,3 @@ func RespondWithError(w http.ResponseWriter, code int, message string) {
 		StatusCode: code,
 	})
 }
-
-// func RespondWithLoginData(w http.ResponseWriter, code int, message string, loginData models.LoginData) {
-// 	RespondWithJSON(w, code, loginData{
-// 		Status:  "success",
-// 		Message: message,
-// 		Data: resData{
-// 			AccessToken: "",
-// 			User:        resUser{},
-// 		},
-// 	})
-// }
