@@ -42,11 +42,11 @@ func main() {
 	http.HandleFunc("POST /auth/register", apiCfg.Register)
 	http.HandleFunc("POST /auth/login", apiCfg.Login)
 
-	http.HandleFunc("GET /api/user/{id}", apiCfg.AuthMiddleware(apiCfg.GetUser))
+	http.HandleFunc("GET /api/user/{id}", apiCfg.AuthMiddleware(apiCfg.GetUserInSameOrg))
 	http.HandleFunc("GET /api/organisations", apiCfg.AuthMiddleware(apiCfg.GetOrganistions))
 	http.HandleFunc("GET /api/organisations/{orgId}", apiCfg.AuthMiddleware(apiCfg.GetOrganistion))
 	http.HandleFunc("POST /api/organisations", apiCfg.AuthMiddleware(apiCfg.CreateOrganistion))
-	http.HandleFunc("POST /api/organisations/{orgId}/users", apiCfg.AuthMiddleware(apiCfg.PatchOrganistionWithUser))
+	http.HandleFunc("POST /api/organisations/{orgId}/users", apiCfg.PatchOrganistionWithUser)
 
 	log.Fatal(server.ListenAndServe())
 }

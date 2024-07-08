@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,26 +10,17 @@ import (
 	"github.com/JamiuJimoh/hngorg/utils"
 )
 
-func (ac *ApiCfg) GetUser(w http.ResponseWriter, r *http.Request) {
+func (ac *ApiCfg) GetUserInSameOrg(w http.ResponseWriter, r *http.Request) {
 	reqUserId := r.PathValue("id")
 	currentUserId := (ac.ctx.Value(currentUserIDKey)).(string)
 
-	// get the organisation using any of the id if they are the same
-	// if currentUserId == reqUserId {
-	// 	ac.db.GetUserByID(r.Context(), reqUserId)
-	// 	return
-	// }
-	// otherwise,
-	// check if the reqUserId is in the organisation created by currentUserId
-	// return the user details if true, respond with authorization error if false
-	// return the user details if both IDs are in the same organisation
 	sqlUser, err := ac.db.GetUserInSameOrgByID(r.Context(), sqlc.GetUserInSameOrgByIDParams{
-		UserID:   currentUserId,
-		UserID_2: reqUserId,
+		MemberID:   currentUserId,
+		MemberID_2: reqUserId,
 	})
 	if err != nil {
-		log.Print(currentUserId)
-		utils.RespondWithError(w, http.StatusUnauthorized, "cannot fetch user not in the same organisation")
+		log.Print(err)
+		utils.RespondWithError(w, http.StatusNotFound, fmt.Sprintf("Found no user with id: %v in the same organisation", reqUserId))
 		return
 	}
 

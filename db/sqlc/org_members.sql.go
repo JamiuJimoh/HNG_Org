@@ -21,9 +21,15 @@ type CreateOrgMemberParams struct {
 	CreatorID string
 }
 
-func (q *Queries) CreateOrgMember(ctx context.Context, arg CreateOrgMemberParams) (OrgMember, error) {
+type CreateOrgMemberRow struct {
+	MemberID  string
+	OrgID     string
+	CreatorID string
+}
+
+func (q *Queries) CreateOrgMember(ctx context.Context, arg CreateOrgMemberParams) (CreateOrgMemberRow, error) {
 	row := q.db.QueryRow(ctx, createOrgMember, arg.MemberID, arg.OrgID, arg.CreatorID)
-	var i OrgMember
+	var i CreateOrgMemberRow
 	err := row.Scan(&i.MemberID, &i.OrgID, &i.CreatorID)
 	return i, err
 }

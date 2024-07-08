@@ -89,12 +89,13 @@ func (q *Queries) GetOrgByOrgID(ctx context.Context, orgID string) ([]Organisati
 }
 
 const getUserOrgsByID = `-- name: GetUserOrgsByID :many
-select org_id, name, description, user_id from organisations
-where user_id = $1
+select o.org_id, o.name, o.description, o.user_id from org_members as om
+join organisations as o on  o.org_id = om.org_id
+where member_id = $1
 `
 
-func (q *Queries) GetUserOrgsByID(ctx context.Context, userID string) ([]Organisation, error) {
-	rows, err := q.db.Query(ctx, getUserOrgsByID, userID)
+func (q *Queries) GetUserOrgsByID(ctx context.Context, memberID string) ([]Organisation, error) {
+	rows, err := q.db.Query(ctx, getUserOrgsByID, memberID)
 	if err != nil {
 		return nil, err
 	}

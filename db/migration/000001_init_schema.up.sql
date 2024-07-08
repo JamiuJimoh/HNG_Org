@@ -19,5 +19,6 @@ create table org_members (
    id serial primary key,
    member_id varchar(36) not null references users(id),
    org_id varchar(36) not null references organisations(org_id) on delete cascade,
-   creator_id varchar(36) not null references users(id) on delete cascade
+   creator_id varchar(36) not null references users(id) on delete cascade,
+   unique (member_id, org_id)
 );

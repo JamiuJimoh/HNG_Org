@@ -18,6 +18,8 @@ const (
 
 func (ac *ApiCfg) AuthMiddleware(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
 		bearerToken, err := getBearerToken(r.Header)
 		claims, err := ac.tokenCfg.VerifyToken([]byte(bearerToken))
 		if err != nil {
@@ -62,17 +64,9 @@ func getBearerToken(h http.Header) (string, error) {
 func handleLoginError(w http.ResponseWriter, err error) {
 	log.Print(err)
 	utils.RespondWithError(w, http.StatusUnauthorized, "Authentication failed")
-	// http.Error(w, "An error occured", http.StatusInternalServerError)
 }
 
 func handleAuthorizationError(w http.ResponseWriter, err error) {
 	log.Print(err)
 	utils.RespondWithError(w, http.StatusBadRequest, "Client error")
-	// http.Error(w, "An error occured", http.StatusInternalServerError)
 }
-
-// func handleLoginError(w http.ResponseWriter, err error) {
-// 	log.Print(err)
-// 	utils.RespondWithError(w, http.StatusUnauthorized, "Authentication failed")
-// 	// http.Error(w, "An error occured", http.StatusInternalServerError)
-// }

@@ -5,6 +5,6 @@ type OrgReqData struct {
 	Description string `json:"description"`
 }
 
-type AddUserToOrgReqData struct {
+type OrgMemberReqData struct {
 	UserId string `json:"userId"`
 }

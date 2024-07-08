@@ -99,19 +99,19 @@ func (q *Queries) GetUserByID(ctx context.Context, id string) (GetUserByIDRow, e
 }
 
 const getUserInSameOrgByID = `-- name: GetUserInSameOrgByID :one
-with org_ids as (
-select org_id, name, description, user_id, id, first_name, last_name, email, password, phone from organisations
-join users on users.id = user_id
-where user_id = $1
+with orga as (
+select distinct m2.member_id as member2 
+from org_members as m1
+join org_members as m2 on m1.org_id = m2.org_id
+where m1.member_id = $1 and m2.member_id = $2
 )
-select id, first_name, last_name, email, password, phone
-from org_ids
-where user_id = $2
+select id, first_name, last_name, email, phone from users
+join orga on orga.member2 = users.id
 `
 
 type GetUserInSameOrgByIDParams struct {
-	UserID   string
-	UserID_2 string
+	MemberID   string
+	MemberID_2 string
 }
 
 type GetUserInSameOrgByIDRow struct {
@@ -119,19 +119,17 @@ type GetUserInSameOrgByIDRow struct {
 	FirstName string
 	LastName  string
 	Email     string
-	Password  string
 	Phone     pgtype.Text
 }
 
 func (q *Queries) GetUserInSameOrgByID(ctx context.Context, arg GetUserInSameOrgByIDParams) (GetUserInSameOrgByIDRow, error) {
-	row := q.db.QueryRow(ctx, getUserInSameOrgByID, arg.UserID, arg.UserID_2)
+	row := q.db.QueryRow(ctx, getUserInSameOrgByID, arg.MemberID, arg.MemberID_2)
 	var i GetUserInSameOrgByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
-		&i.Password,
 		&i.Phone,
 	)
 	return i, err

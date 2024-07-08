@@ -9,6 +9,7 @@ import (
 )
 
 type OrgMember struct {
+	ID        int32
 	MemberID  string
 	OrgID     string
 	CreatorID string

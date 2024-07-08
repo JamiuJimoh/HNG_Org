@@ -9,8 +9,9 @@ where org_id = $1;
 
 
 -- name: GetUserOrgsByID :many
-select * from organisations
-where user_id = $1;
+select o.org_id, o.name, o.description, o.user_id from org_members as om
+join organisations as o on  o.org_id = om.org_id
+where member_id = $1;
 
 -- name: GetOrgByID :one
 select * from organisations

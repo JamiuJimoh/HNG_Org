@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/JamiuJimoh/hngorg/db/sqlc"
@@ -51,7 +52,6 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	validatorError := utils.ValidateOrgName(org.Name)
 	if validatorError != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -75,7 +75,6 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// orgMember := user.CreateOrgMemberFromUser(org.OrgId, user.UserId)
 	_, err = ac.db.CreateOrgMember(r.Context(), sqlc.CreateOrgMemberParams{
 		MemberID:  sqlOrg.UserID,
 		OrgID:     sqlOrg.OrgID,
@@ -91,11 +90,42 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ac *ApiCfg) PatchOrganistionWithUser(w http.ResponseWriter, r *http.Request) {
-	// currentUserId := (ac.ctx.Value(currentUserIDKey)).(string)
-	// orgId := r.PathValue("orgId")
-	// sqlOrg, err := ac.db.GetOrgByOrgID(r.Context(), orgId)
-	// if err != nil {
-	// utils.RespondWithError(w, http.StatusNotFound, "Client error")
-	// return
-	// }
+	orgId := r.PathValue("orgId")
+
+	var member models.OrgMemberReqData
+	bytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Print(err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "an error occurred")
+		return
+	}
+	err = json.Unmarshal(bytes, &member)
+	if err != nil {
+		log.Print(err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Client error")
+		return
+	}
+
+	sqlOrg, err := ac.db.GetOrgByID(r.Context(), orgId)
+	if err != nil {
+		log.Print(err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Client error")
+		return
+	}
+	_, err = ac.db.CreateOrgMember(r.Context(), sqlc.CreateOrgMemberParams{
+		MemberID:  member.UserId,
+		OrgID:     sqlOrg.OrgID,
+		CreatorID: sqlOrg.UserID,
+	})
+	if err != nil {
+		log.Print(err)
+		utils.RespondWithError(w, http.StatusBadRequest, "Client error")
+		return
+	}
+
+	payload := models.OrgMessageData{
+		Status:  "success",
+		Message: "User added to organisation successfully",
+	}
+	utils.RespondWithJSON(w, http.StatusCreated, payload)
 }
