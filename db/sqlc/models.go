@@ -8,6 +8,12 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type OrgMember struct {
+	MemberID  string
+	OrgID     string
+	CreatorID string
+}
+
 type Organisation struct {
 	OrgID       string
 	Name        string

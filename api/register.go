@@ -60,6 +60,17 @@ func (ac *ApiCfg) Register(w http.ResponseWriter, r *http.Request) {
 		UserID:      dbUser.ID,
 	})
 
+	orgMember := user.CreateOrgMemberFromUser(org.OrgId, user.UserId)
+	_, err = ac.db.CreateOrgMember(r.Context(), sqlc.CreateOrgMemberParams{
+		MemberID:  orgMember.Id,
+		OrgID:     orgMember.OrgId,
+		CreatorID: orgMember.Creator_id,
+	})
+	if err != nil {
+		handleRegistrationError(w, err)
+		return
+	}
+
 	payload, err := ac.createLoginData(models.ResUserFromDBUser(dbUser), "Registration successful")
 	if err != nil {
 		handleRegistrationError(w, err)

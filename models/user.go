@@ -43,3 +43,13 @@ func (u *User) CreateOrgFromUser() (*Organisation, error) {
 
 	return &org, nil
 }
+
+func (u *User) CreateOrgMemberFromUser(orgId string, memberId string) *OrgMember {
+	org := OrgMember{
+		Id:         memberId,
+		OrgId:      orgId,
+		Creator_id: u.UserId,
+	}
+
+	return &org
+}

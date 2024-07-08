@@ -12,4 +12,11 @@ create table organisations (
    name varchar(255) not null,
    description varchar(255),
    user_id varchar(36) not null references users(id)
+   check (name <> '')
+);
+
+create table org_members (
+   member_id varchar(36) primary key not null references users(id),
+   org_id varchar(36) not null references organisations(org_id) on delete cascade,
+   creator_id varchar(36) not null references users(id) on delete cascade
 );
