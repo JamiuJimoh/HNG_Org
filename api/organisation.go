@@ -75,6 +75,17 @@ func (ac *ApiCfg) CreateOrganistion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// orgMember := user.CreateOrgMemberFromUser(org.OrgId, user.UserId)
+	_, err = ac.db.CreateOrgMember(r.Context(), sqlc.CreateOrgMemberParams{
+		MemberID:  sqlOrg.UserID,
+		OrgID:     sqlOrg.OrgID,
+		CreatorID: sqlOrg.UserID,
+	})
+	if err != nil {
+		handleRegistrationError(w, err)
+		return
+	}
+
 	ret := models.OrgFromSQLOrg(sqlOrg)
 	utils.RespondWithJSON(w, http.StatusCreated, ret)
 }
